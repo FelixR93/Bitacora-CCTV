@@ -17,7 +17,12 @@ const HistorialMaterialesScreen = ({ navigation }) => {
         ...doc.data(),
       }));
 
-      setMateriales(lista);
+      const listaOrdenada = lista.sort((a, b) => {
+        return (b.timestamp || 0) - (a.timestamp || 0);
+      });
+
+      setMateriales(listaOrdenada);
+
     } catch (error) {
       console.error("Error al obtener materiales:", error);
     } finally {

@@ -1,5 +1,5 @@
 // React para crear componentes y useState para manejar estados
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 // Componentes principales de React Native
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, ScrollView} from "react-native";
@@ -14,7 +14,7 @@ import * as Yup from "yup";
 
 // Firebase
 import { doc, getDoc } from "firebase/firestore";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { db, auth } from "./firebaseConfig";
 
 // Pantallas
@@ -32,7 +32,31 @@ import RegistroRelaveScreen from "./screens/RegistroRelaveScreen";
 import HistorialMaterialesScreen from "./screens/HistorialMaterialesScreen";
 import DetalleMaterialScreen from "./screens/DetalleMaterialScreen";
 
+console.log(process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID);
+
 const Stack = createNativeStackNavigator();
+
+const linking = {
+  prefixes: [],
+  config: {
+    screens: {
+      Home: "",
+      Login: "login",
+      Registro: "registro",
+      Historial: "historial",
+      Detalle: "detalle",
+      Register: "register",
+      MaterialRecibido: "material-recibido",
+      MaterialEnviado: "material-enviado",
+      RegistroMolienda: "registro-molienda",
+      RegistroCarbonActivado: "registro-carbon-activado",
+      RegistroCarbonDesactivado: "registro-carbon-desactivado",
+      RegistroRelave: "registro-relave",
+      HistorialMateriales: "historial-materiales",
+      DetalleMaterial: "detalle-material",
+    },
+  },
+};
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string()
@@ -90,7 +114,7 @@ const LoginScreen = ({ navigation }) => {
 
               Alert.alert("Bienvenido", nombre);
 
-              navigation.navigate("Home", {
+              navigation.replace("Home", {
                 nombre: nombre,
               });
             } catch (error) {
@@ -165,9 +189,32 @@ const LoginScreen = ({ navigation }) => {
 };
 
 export default function App() {
+  const [usuarioActivo, setUsuarioActivo] = useState(null);
+  const [cargandoSesion, setCargandoSesion] = useState(true);
+
+  useEffect(() => {
+    const verificarSesion = onAuthStateChanged(auth, (user) => {
+      setUsuarioActivo(user);
+      setCargandoSesion(false);
+    });
+
+    return verificarSesion;
+  }, []);
+
+  if (cargandoSesion) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>Cargando...</Text>
+      </View>
+    );
+  }
+
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <NavigationContainer linking={linking}>
+      <Stack.Navigator
+        initialRouteName={usuarioActivo ? "Home" : "Login"}
+        screenOptions={{ headerShown: false }}
+      >
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Registro" component={RegistroScreen} />
@@ -308,6 +355,19 @@ const styles = StyleSheet.create({
     color: "#2563eb",
     textAlign: "center",
     fontSize: 16,
+    fontWeight: "bold",
+  },
+
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: "#0f172a",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  loadingText: {
+    color: "#ffffff",
+    fontSize: 18,
     fontWeight: "bold",
   },
 });

@@ -18,9 +18,7 @@ const HistorialScreen = ({ navigation }) => {
       }));
 
       const listaOrdenada = lista.sort((a, b) => {
-        const fechaA = a.fechaRegistro?.seconds || 0;
-        const fechaB = b.fechaRegistro?.seconds || 0;
-        return fechaB - fechaA;
+        return (b.timestamp || 0) - (a.timestamp || 0);
       });
 
       setNovedades(listaOrdenada);

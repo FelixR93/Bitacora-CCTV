@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert} from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
+import { BackHandler } from "react-native";
 
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebaseConfig";
@@ -37,7 +38,31 @@ const HomeScreen = ({ route, navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
-      obtenerTotales();
+      const onBackPress = () => {
+        Alert.alert(
+          "Salir de la aplicación",
+          "¿Está seguro que desea salir?",
+          [
+            {
+              text: "Cancelar",
+              style: "cancel",
+            },
+            {
+              text: "Salir",
+              onPress: () => BackHandler.exitApp(),
+            },
+          ]
+        );
+
+        return true;
+      };
+
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress
+      );
+
+      return () => subscription.remove();
     }, [])
   );
 
