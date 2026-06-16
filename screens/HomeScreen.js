@@ -22,6 +22,10 @@ const HomeScreen = ({ route, navigation }) => {
 
       setTotalNovedades(novedadesSnapshot.size);
       setTotalMateriales(materialesSnapshot.size);
+
+      console.log("Novedades:", novedadesSnapshot.size);
+      console.log("Materiales:", materialesSnapshot.size);
+      
     } catch (error) {
       console.error("Error al obtener totales: ", error);
     }
@@ -38,6 +42,7 @@ const HomeScreen = ({ route, navigation }) => {
 
   useFocusEffect(
     useCallback(() => {
+      obtenerTotales();
       const onBackPress = () => {
         Alert.alert(
           "Salir de la aplicación",
@@ -164,7 +169,7 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8fafc",
+    backgroundColor: "#555758ff",
   },
 
   contentContainer: {

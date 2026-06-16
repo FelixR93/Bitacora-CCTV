@@ -12,13 +12,13 @@ import { db } from "../firebaseConfig";
 const placas = ["GTH-8854", "GSN-3402"];
 
 const CarbonDesactivadoSchema = Yup.object().shape({
-  horaSalida: Yup.string().required("La hora de salida es obligatoria"),
+  horaSalida: Yup.string().matches(/^\d{2}h\d{2}$/, "Use el formato correcto. Ej: 13h52").required("La hora de salida es obligatoria"),
   origen: Yup.string().required("El origen es obligatorio"),
   destino: Yup.string().required("El destino es obligatorio"),
   vehiculo: Yup.string().required("El vehículo es obligatorio"),
   placa: Yup.string().required("Seleccione la placa"),
-  cantidadBultos: Yup.string().required("La cantidad de bultos es obligatoria"),
-  guia: Yup.string().required("La guía es obligatoria"),
+  cantidadBultos: Yup.string().matches(/^[0-9]+$/, "Solo se permiten números").required("La cantidad de bultos es obligatoria"),
+  guia: Yup.string().matches(/^[0-9]+$/, "Solo se permiten números").required("La guía es obligatoria"),
   observacion: Yup.string().required("La observación es obligatoria"),
   novedad: Yup.string().required("La novedad es obligatoria"),
 });
@@ -197,7 +197,10 @@ Guía emitida *(#${values.guia})*
                 placeholder="Ej: 07h32"
                 placeholderTextColor="#94a3b8"
                 value={values.horaSalida}
-                onChangeText={handleChange("horaSalida")}
+                onChangeText={(text) => {
+                  const limpio = text.replace(/[^0-9h]/g, "");
+                  setFieldValue("horaSalida", limpio);
+                }}                
                 onFocus={() => setFocusedField("horaSalida")}
                 onBlur={(e) => {
                   handleBlur("horaSalida")(e);
@@ -291,7 +294,10 @@ Guía emitida *(#${values.guia})*
                 placeholder="Ej: 34"
                 placeholderTextColor="#94a3b8"
                 value={values.cantidadBultos}
-                onChangeText={handleChange("cantidadBultos")}
+                onChangeText={(text) => {
+                  const soloNumeros = text.replace(/[^0-9]/g, "");
+                  setFieldValue("cantidadBultos", soloNumeros);
+                }}
                 onFocus={() => setFocusedField("cantidadBultos")}
                 onBlur={(e) => {
                   handleBlur("cantidadBultos")(e);
@@ -309,7 +315,10 @@ Guía emitida *(#${values.guia})*
                 placeholder="Ej: 00008854"
                 placeholderTextColor="#94a3b8"
                 value={values.guia}
-                onChangeText={handleChange("guia")}
+                onChangeText={(text) => {
+                  const soloNumeros = text.replace(/[^0-9]/g, "");
+                  setFieldValue("guia", soloNumeros);
+                }}
                 onFocus={() => setFocusedField("guia")}
                 onBlur={(e) => {
                   handleBlur("guia")(e);

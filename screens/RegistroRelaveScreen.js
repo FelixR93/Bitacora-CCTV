@@ -12,9 +12,9 @@ import { db } from "../firebaseConfig";
 const placas = ["GSS-3248", "GSR-7963", "GSK-5397", "GSW-2383"];
 
 const RelaveSchema = Yup.object().shape({
-  horaSalida: Yup.string().required("La hora de salida es obligatoria"),
-  cantidadBultos: Yup.string().required("La cantidad de bultos es obligatoria"),
-  guia: Yup.string().required("La guía es obligatoria"),
+  horaSalida: Yup.string().matches(/^\d{2}h\d{2}$/, "Use el formato correcto. Ej: 13h52").required("La hora de salida es obligatoria"),
+  cantidadBultos: Yup.string().matches(/^[0-9]+$/, "Solo se permiten números").required("La cantidad de bultos es obligatoria"),
+  guia: Yup.string().matches(/^[0-9]+$/, "Solo se permiten números").required("La guía es obligatoria"),
   material: Yup.string().required("El material es obligatorio"),
   vehiculo: Yup.string().required("El vehículo es obligatorio"),
   placa: Yup.string().required("Seleccione la placa"),
@@ -179,7 +179,10 @@ const RegistroRelaveScreen = () => {
                 placeholder="Ej: 13h52"
                 placeholderTextColor="#94a3b8"
                 value={values.horaSalida}
-                onChangeText={handleChange("horaSalida")}
+                onChangeText={(text) => {
+                  const limpio = text.replace(/[^0-9h]/g, "");
+                  setFieldValue("horaSalida", limpio);
+                }}
                 onFocus={() => setFocusedField("horaSalida")}
                 onBlur={(e) => {
                   handleBlur("horaSalida")(e);
@@ -196,7 +199,10 @@ const RegistroRelaveScreen = () => {
                 placeholder="Ej: 500"
                 placeholderTextColor="#94a3b8"
                 value={values.cantidadBultos}
-                onChangeText={handleChange("cantidadBultos")}
+                onChangeText={(text) => {
+                  const soloNumeros = text.replace(/[^0-9]/g, "");
+                  setFieldValue("cantidadBultos", soloNumeros);
+                }}
                 onFocus={() => setFocusedField("cantidadBultos")}
                 onBlur={(e) => {
                   handleBlur("cantidadBultos")(e);
@@ -214,7 +220,11 @@ const RegistroRelaveScreen = () => {
                 placeholder="Ej: 0000176"
                 placeholderTextColor="#94a3b8"
                 value={values.guia}
-                onChangeText={handleChange("guia")}
+                keyboardType="numeric"
+                onChangeText={(text) => {
+                  const soloNumeros = text.replace(/[^0-9]/g, "");
+                  setFieldValue("guia", soloNumeros);
+                }}
                 onFocus={() => setFocusedField("guia")}
                 onBlur={(e) => {
                   handleBlur("guia")(e);

@@ -13,11 +13,11 @@ const placas = ["GTH-8854", "GSN-3402", "GSM-1424"];
 
 const CarbonSchema = Yup.object().shape({
   material: Yup.string().required("El material es obligatorio"),
-  horaLlegada: Yup.string().required("La hora es obligatoria"),
-  totalBigBags: Yup.string().required("Ingrese el total de Big Bags"),
+  horaLlegada: Yup.string().matches(/^\d{2}h\d{2}$/, "Use el formato correcto. Ej: 13h52").required("La hora es obligatoria"),
+  totalBigBags: Yup.string().matches(/^[0-9]+$/, "Solo se permiten números").required("Ingrese el total de Big Bags"),
   vehiculo: Yup.string().required("El vehículo es obligatorio"),
   placa: Yup.string().required("Seleccione la placa"),
-  guia: Yup.string().required("La guía es obligatoria"),
+  guia: Yup.string().matches(/^[0-9]+$/, "Solo se permiten números").required("La guía es obligatoria"),
   bigBag1Bultos: Yup.string().required("Ingrese bultos del Big Bag #1"),
   bigBag1Origen: Yup.string().required("Ingrese origen del Big Bag #1"),
   bigBag1Precinto: Yup.string().required("Ingrese precinto del Big Bag #1"),
@@ -268,7 +268,10 @@ ${values.procesado} *N° Guía:* ${values.guia}
                 style={inputStyle("horaLlegada")}
                 placeholder="Ej: 10h21"
                 value={values.horaLlegada}
-                onChangeText={handleChange("horaLlegada")}
+                onChangeText={(text) => {
+                  const limpio = text.replace(/[^0-9h]/g, "");
+                  setFieldValue("horaLlegada", limpio);
+                }}
                 onFocus={() => setFocusedField("horaLlegada")}
                 onBlur={(e) => {
                   handleBlur("horaLlegada")(e);
@@ -284,7 +287,10 @@ ${values.procesado} *N° Guía:* ${values.guia}
                 style={inputStyle("totalBigBags")}
                 placeholder="Ej: 4"
                 value={values.totalBigBags}
-                onChangeText={handleChange("totalBigBags")}
+                onChangeText={(text) => {
+                  const soloNumeros = text.replace(/[^0-9]/g, "");
+                  setFieldValue("totalBigBags", soloNumeros);
+                }}
                 keyboardType="numeric"
               />
               {touched.totalBigBags && errors.totalBigBags && (
@@ -330,7 +336,10 @@ ${values.procesado} *N° Guía:* ${values.guia}
                 style={inputStyle("guia")}
                 placeholder="Ej: 003-002-000000222"
                 value={values.guia}
-                onChangeText={handleChange("guia")}
+                onChangeText={(text) => {
+                  const soloNumeros = text.replace(/[^0-9-]/g, "");
+                  setFieldValue("guia", soloNumeros);
+                }}
               />
               {touched.guia && errors.guia && (
                 <Text style={styles.error}>{errors.guia}</Text>
@@ -354,7 +363,10 @@ ${values.procesado} *N° Guía:* ${values.guia}
                   style={inputStyle(`bigBag${num}Bultos`)}
                   placeholder="Ej: 08"
                   value={values[`bigBag${num}Bultos`]}
-                  onChangeText={handleChange(`bigBag${num}Bultos`)}
+                  onChangeText={(text) => {
+                    const soloNumeros = text.replace(/[^0-9]/g, "");
+                    setFieldValue(`bigBag${num}Bultos`, soloNumeros);
+                  }}
                   keyboardType="numeric"
                 />
 

@@ -1,18 +1,18 @@
 // React para crear componentes y useState para manejar estados
 import React, { useState, useEffect } from "react";
 
-// Componentes principales de React Native
+// Componentes que permiten construir la interfaz visual del login
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, ScrollView} from "react-native";
 
 // Navegación
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-// Formularios y validaciones
+// Nos ayuda al manejo y validación de formularios
 import { Formik } from "formik";
 import * as Yup from "yup";
 
-// Firebase
+// Firebase para la autenticación y consulta de datos en la nube.
 import { doc, getDoc } from "firebase/firestore";
 import { signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { db, auth } from "./firebaseConfig";

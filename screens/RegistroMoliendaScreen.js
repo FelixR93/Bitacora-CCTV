@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView, Share, Vibration, Image} from "react-native";
 
+// Permite tomar fotos o seleccionar una de la galeria
 import * as ImagePicker from "expo-image-picker";
+
+// compartimos los reportes e imagenes
 import * as Sharing from "expo-sharing";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -45,7 +48,7 @@ const generarPrecintosPersonalizados = (prefijo, texto) => {
 const MoliendaSchema = Yup.object().shape({
   tipoMolino: Yup.string().required("El tipo de molino es obligatorio"),
   origen: Yup.string().required("El origen es obligatorio"),
-  horaLlegada: Yup.string().required("La hora de llegada es obligatoria"),
+  horaLlegada: Yup.string().matches(/^\d{2}h\d{2}$/, "Use el formato correcto. Ej: 13h52").required("La hora de llegada es obligatoria"),
   vehiculo: Yup.string().required("El vehículo es obligatorio"),
   placa: Yup.string().required("Seleccione la placa"),
   guia: Yup.string().required("La guía es obligatoria"),
@@ -306,7 +309,10 @@ ${precintosClasificados}
                 style={inputStyle("horaLlegada")}
                 placeholder="Ej: 09h00"
                 value={values.horaLlegada}
-                onChangeText={handleChange("horaLlegada")}
+                onChangeText={(text) => {
+                  const limpio = text.replace(/[^0-9h]/g, "");
+                  setFieldValue("horaLlegada", limpio);
+                }}
                 onFocus={() => setFocusedField("horaLlegada")}
                 onBlur={(e) => {
                   handleBlur("horaLlegada")(e);
@@ -364,8 +370,10 @@ ${precintosClasificados}
                 style={inputStyle("guia")}
                 placeholder="Ej: 003-002-000000226"
                 value={values.guia}
-                onChangeText={handleChange("guia")}
-                onFocus={() => setFocusedField("guia")}
+                onChangeText={(text) => {
+                  const soloNumeros = text.replace(/[^0-9-]/g, "");
+                  setFieldValue("guia", soloNumeros);
+                }}                onFocus={() => setFocusedField("guia")}
                 onBlur={(e) => {
                   handleBlur("guia")(e);
                   setFocusedField(null);
@@ -421,7 +429,10 @@ ${precintosClasificados}
                   style={inputStyle(`cantidad${num}`)}
                   placeholder="Ej: 05"
                   value={values[`cantidad${num}`]}
-                  onChangeText={handleChange(`cantidad${num}`)}
+                  onChangeText={(text) => {
+                    const soloNumeros = text.replace(/[^0-9]/g, "");
+                    setFieldValue(`cantidad${num}`, soloNumeros);
+                  }}
                   keyboardType="numeric"
                 />
                 {num === 1 && touched.cantidad1 && errors.cantidad1 && (
